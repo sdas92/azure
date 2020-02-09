@@ -1,6 +1,6 @@
 #Generates a CSV list with all subscriptions' list and their name...
 #Author: Somnath Das
-az login
+az login | Out-Null
 $subscriptions = az account list --all | ConvertFrom-Json
 
 $outputPath = "\\Somnath-Das\e$\logs\az.csv"

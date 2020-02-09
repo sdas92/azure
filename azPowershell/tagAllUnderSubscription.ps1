@@ -1,6 +1,6 @@
 #Tags all resource groups and resources under a given subscription...
 #Author: Somnath Das
-az login
+az login | Out-Null
 
 #Global variables
 $subscriptionID = "Your_subscription_ID"
