@@ -1,3 +1,5 @@
+#Tags all resource groups and resources under a given subscription...
+
 az login
 
 #Global variables

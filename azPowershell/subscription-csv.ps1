@@ -1,3 +1,5 @@
+#Generates a CSV list with all subscriptions' list and their name...
+
 az login
 $subscriptions = az account list --all | ConvertFrom-Json
 
