@@ -1,5 +1,5 @@
 #Tags all resource groups and resources under a given subscription...
-
+#Author: Somnath Das
 az login
 
 #Global variables
