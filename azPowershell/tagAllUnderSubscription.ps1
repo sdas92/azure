@@ -8,7 +8,7 @@ $tagApp = "AppName"
 $tagCountry = "India"
 
 
-#Tag the resource groups.
+#Tag all resource groups.
 Function tagResourceGroups
 {
   param([string]$RG)
