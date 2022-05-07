@@ -4,7 +4,7 @@
 #Your subscription ID from Azure
 variable "subscription_id" {
   type        = string
-  default     = "00c9b468-5a13-44d5-8dcc-403e8c2f87fe" 
+  default     = "XXXXX-XXXXX-XXXXX-XXXXX" 
   description = "Your deployment subscription ID"
 }
 
