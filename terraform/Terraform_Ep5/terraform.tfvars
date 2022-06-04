@@ -2,7 +2,7 @@
 #Author: Somnath Das
 
 #Subscription
-subscription_id = "1d4bfebb-7fb1-4d2b-8104-1d21f9891534"
+subscription_id = "xxxx-xxxx-xxxx"
 
 #RG Name
 rg_name = "das-rg" 
