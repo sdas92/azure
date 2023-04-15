@@ -1,0 +1,42 @@
+trigger:
+  - none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Bash@3
+  name: zip
+  displayName: 'Zip the dataFiles directory with Password'
+  inputs:
+    filePath: '$(System.DefaultWorkingDirectory)/scripts/bash/zip.sh'
+    arguments: '$(filePassword) $(System.DefaultWorkingDirectory)/dataFiles/ep3.txt'
+
+- task: DownloadSecureFile@1
+  name: gcpJson
+  displayName: 'Download GCP Key file'
+  inputs:
+    secureFile: 'gcpKey.json'
+
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      cd ./terraform/gcp/azDvopEp3
+      export TF_VAR_project_id="$(project_id)"
+      export TF_VAR_bucket_name="$(bucket_name)"
+      export GOOGLE_APPLICATION_CREDENTIALS="$(gcpJson.secureFilePath)"
+      terraform init
+      terraform plan
+      terraform apply --auto-approve
+      pip install --upgrade google-cloud-storage
+      echo "$(gcpJson.secureFilePath)"
+      #cat $(gcpJson.secureFilePath)
+
+
+- task: PythonScript@0
+  inputs:
+    scriptSource: 'filePath'
+    scriptPath: '$(System.DefaultWorkingDirectory)/scripts/python/gcsUpload.py'
+    arguments: '$(gcpJson.secureFilePath) $(bucket_name)'
+
