@@ -1,0 +1,61 @@
+trigger:
+  - none
+
+stages:
+- stage: Stage1
+  pool:
+    vmImage: 'windows-latest'
+
+  ##### Jobs inside Stage
+  jobs:
+
+  #### CI Job
+  - job: createStorage
+    ## Steps inside the Job
+    steps:
+
+    # Tasks inside the Steps
+    - task: AzurePowerShell@5
+      name: deployStorage
+      displayName: 'Create storage & container'
+      inputs:
+        azureSubscription: 'daslearning-ep2'
+        ScriptType: 'FilePath'
+        ScriptPath: '$(System.DefaultWorkingDirectory)/scripts/ps/azStgCreateEp4.ps1'
+        azurePowerShellVersion: 'LatestVersion'
+
+    - task: Bash@3
+      name: displayValues
+      displayName: 'Check the output from previous task'
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "$(deployStorage.uploadAccount)"
+          echo "$(deployStorage.uploadContainer)"
+
+
+  #### Second job to upload the file (CD Job)
+  - job: uploadFile
+    dependsOn: createStorage
+    variables:
+      storageAccName: $[ dependencies.createStorage.outputs['deployStorage.uploadAccount'] ]
+      containerName: $[ dependencies.createStorage.outputs['deployStorage.uploadContainer'] ]
+      rgName: $[ dependencies.createStorage.outputs['deployStorage.rgName'] ]
+    pool:
+      vmImage: 'ubuntu-latest' # A different agent for this job only
+
+    ## Steps in the job
+    steps:
+
+    - task: AzureCLI@2
+      name: uploadToAzureStorage
+      displayName: 'Upload the file using az cli'
+      inputs:
+        azureSubscription: 'daslearning-ep2'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          key=$(az storage account keys list -g "$(rgName)" -n "$(storageAccName)" --query [0].value -o tsv)
+          az storage blob upload --account-name "$(storageAccName)" --account-key $key --container-name "$(containerName)" --file ./dataFiles/ep4.txt --name "ep4uploaded.txt"
+
+# End
